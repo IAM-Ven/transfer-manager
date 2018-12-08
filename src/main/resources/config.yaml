@@ -1,0 +1,14 @@
+
+# Spark server configuration
+server:
+  # API port
+  port: 4568
+  # Thread Pool configs
+  minThreads: 2
+  maxThreads: 10
+  idleTimeoutMillis: 1000
+
+# Specify log config file's FULL PATH
+# Otherwise 'logback.xml' from resource package will be used
+#logConfig: '/Users/rzinalie/Devel/github/transfer-manager/src/main/resources/logback.xml'
+logConfig: 'logback.xml'
