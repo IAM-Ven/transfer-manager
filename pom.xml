@@ -18,7 +18,7 @@
         <joda-money.version>1.0.1</joda-money.version>
         <logback.version>1.2.3</logback.version>
         <lombok.version>1.16.20</lombok.version>
-        <jackson.version>2.9.2</jackson.version>
+        <jackson.version>2.9.5</jackson.version>
         <guava.version>23.0</guava.version>
         <guice.version>4.2.2</guice.version>
 
