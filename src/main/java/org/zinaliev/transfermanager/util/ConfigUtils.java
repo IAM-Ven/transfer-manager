@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 
 public class ConfigUtils {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
+    private static final ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory());
 
     private ConfigUtils() {
     }
@@ -32,7 +32,7 @@ public class ConfigUtils {
             throw new ApplicationStartupException("Config file does not exist - " + fileName);
 
         try {
-            return MAPPER.readValue(configFile, ApplicationConfig.class);
+            return YAML_MAPPER.readValue(configFile, ApplicationConfig.class);
         } catch (IOException e) {
             throw new ApplicationStartupException("Can not read config file", e);
         }

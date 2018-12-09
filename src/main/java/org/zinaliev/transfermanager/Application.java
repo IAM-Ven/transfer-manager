@@ -6,7 +6,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.zinaliev.transfermanager.api.ApiPaths;
-import org.zinaliev.transfermanager.api.ExceptionHandler;
+import org.zinaliev.transfermanager.api.ExceptionHandlerImpl;
 import org.zinaliev.transfermanager.api.WalletController;
 import org.zinaliev.transfermanager.util.ConfigUtils;
 import spark.Spark;
@@ -14,13 +14,14 @@ import spark.Spark;
 @Slf4j
 @Singleton
 public class Application {
+    protected static Injector injector;
 
     private final ApplicationConfig appConfig;
-    private final ExceptionHandler exceptionHandler;
+    private final ExceptionHandlerImpl exceptionHandler;
     private final WalletController walletController;
 
     @Inject
-    public Application(ApplicationConfig appConfig, ExceptionHandler exceptionHandler, WalletController walletController) {
+    public Application(ApplicationConfig appConfig, ExceptionHandlerImpl exceptionHandler, WalletController walletController) {
         this.appConfig = appConfig;
         this.exceptionHandler = exceptionHandler;
         this.walletController = walletController;
@@ -36,7 +37,7 @@ public class Application {
         ApplicationConfig appConfig = ConfigUtils.readAppConfig(args[0]);
         ConfigUtils.setupLogging(appConfig);
 
-        Injector injector = Guice.createInjector(new ApplicationModule(appConfig));
+        injector = Guice.createInjector(new ApplicationModule(appConfig));
 
         Application application = injector.getInstance(Application.class);
         application.start();
