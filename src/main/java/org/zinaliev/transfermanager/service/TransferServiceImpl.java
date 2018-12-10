@@ -45,6 +45,7 @@ public class TransferServiceImpl implements TransferService {
             lockedAfter = source;
         }
 
+        // avoids resource-ordering deadlock
         synchronized (lockedFirst.getSync()) {
             synchronized (lockedAfter.getSync()) {
                 transfer(source, target, amount);
@@ -52,7 +53,7 @@ public class TransferServiceImpl implements TransferService {
         }
     }
 
-    protected void transfer(Wallet source, Wallet target, double amount) {
+    private void transfer(Wallet source, Wallet target, double amount) {
         Money sourceMoney = source.getMoney();
         Money targetMoney = target.getMoney();
 
