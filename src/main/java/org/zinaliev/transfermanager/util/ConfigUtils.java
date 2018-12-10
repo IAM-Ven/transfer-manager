@@ -7,9 +7,10 @@ import ch.qos.logback.core.util.StatusPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Strings;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.IllegalCurrencyException;
 import org.slf4j.LoggerFactory;
 import org.zinaliev.transfermanager.ApplicationConfig;
-import org.zinaliev.transfermanager.exception.ApplicationStartupException;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,17 +26,23 @@ public class ConfigUtils {
     public static ApplicationConfig readAppConfig(String fileName) {
 
         if (Strings.isNullOrEmpty(fileName))
-            throw new ApplicationStartupException("Config file name can not be empty");
+            throw new IllegalArgumentException("Config file name can not be empty");
 
         File configFile = new File(fileName);
         if (!configFile.exists())
-            throw new ApplicationStartupException("Config file does not exist - " + fileName);
+            throw new IllegalArgumentException("Config file does not exist - " + fileName);
+
+        ApplicationConfig result;
 
         try {
-            return YAML_MAPPER.readValue(configFile, ApplicationConfig.class);
+            result = YAML_MAPPER.readValue(configFile, ApplicationConfig.class);
         } catch (IOException e) {
-            throw new ApplicationStartupException("Can not read config file", e);
+            throw new IllegalArgumentException("Can not parse config file", e);
         }
+
+        validate(result);
+
+        return result;
     }
 
     public static void setupLogging(ApplicationConfig appConfig) {
@@ -59,5 +66,16 @@ public class ConfigUtils {
         }
 
         StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+    }
+
+    private static void validate(ApplicationConfig appConfig) {
+
+        for (String currencyCode : appConfig.getSupportedCurrencies()) {
+            try {
+                CurrencyUnit.of(currencyCode);
+            } catch (IllegalCurrencyException e) {
+                throw new IllegalArgumentException("Invalid application configuration provided", e);
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.zinaliev.transfermanager.api.model.ResponseModel;
 import org.zinaliev.transfermanager.exception.ApplicationException;
 import org.zinaliev.transfermanager.exception.JsonReadException;
+import org.zinaliev.transfermanager.exception.StatusCode;
 import org.zinaliev.transfermanager.util.JsonMapper;
 import spark.ExceptionHandler;
 import spark.Request;
@@ -31,20 +32,27 @@ public class ExceptionHandlerImpl implements ExceptionHandler<Exception> {
 
         if (e instanceof IllegalArgumentException || e instanceof JsonReadException) {
             response.status(HttpStatus.BAD_REQUEST_400);
-            body.setCodeEx(HttpStatus.BAD_REQUEST_400);
+            body.setCodeEx(StatusCode.BAD_REQUEST_DEFAULT.getCode());
         } else if (e instanceof ApplicationException) {
             ApplicationException exc = (ApplicationException) e;
             response.status(exc.getCode());
             body.setCodeEx(exc.getCodeEx());
+            body.setMessage(exc.getMessage());
         } else {
             response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
             body.setCodeEx(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            body.setMessage(e.getMessage());
         }
 
         if (response.status() == HttpStatus.INTERNAL_SERVER_ERROR_500)
             log.warn("Unhandled exception intercepted", e);
         else
-            log.info("Mapped {} -> code {}, codeEx: {}", e.toString(), response.status(), body.getCodeEx());
+            log.info("Mapped {} -> code: {}, codeEx: {}, message: {}",
+                    e.getClass().getSimpleName(),
+                    response.status(),
+                    body.getCodeEx(),
+                    body.getMessage()
+            );
 
         try {
             response.body(jsonMapper.toJson(body));

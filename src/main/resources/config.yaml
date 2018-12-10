@@ -8,6 +8,13 @@ server:
   maxThreads: 10
   idleTimeoutMillis: 1000
 
+# Supported currencies
+currencies:
+  - 'RUR'
+  - 'GBP'
+  - 'USD'
+  - 'EUR'
+
 # Specify log config file's FULL PATH
 # Otherwise 'logback.xml' from resource package will be used
 #logConfig: '/Users/rzinalie/Devel/github/transfer-manager/src/main/resources/logback.xml'

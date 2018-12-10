@@ -1,4 +1,11 @@
 # transfer-manager
 A service for money transfers between accounts 
 
-## REST API
+## TO-DO
+- ~~transfer service implementation~~
+- ~~configurable supported currency list~~
+- unit tests for storage and transfer service (at least for these two)
+- ~~positive transfer IT~~
+- ~~negative ITs~~
+- ~~default config file loading in case no args passed to main~~   
+- API description in README   

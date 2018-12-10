@@ -11,6 +11,7 @@ import org.joda.money.Money;
 public class Wallet {
 
     @Getter
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Object sync = new Object();
 

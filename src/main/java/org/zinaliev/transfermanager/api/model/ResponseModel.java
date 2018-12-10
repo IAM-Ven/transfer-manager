@@ -2,9 +2,9 @@ package org.zinaliev.transfermanager.api.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
-@ToString
+import static org.zinaliev.transfermanager.exception.StatusCode.SUCCEED;
+
 public class ResponseModel<T> {
 
     @Getter
@@ -13,7 +13,7 @@ public class ResponseModel<T> {
 
     @Getter
     @Setter
-    private int codeEx = 200;
+    private int codeEx = SUCCEED.getCode();
 
     @Getter
     @Setter

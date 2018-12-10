@@ -9,7 +9,6 @@ import org.zinaliev.transfermanager.service.TransferService;
 import org.zinaliev.transfermanager.service.Wallet;
 import org.zinaliev.transfermanager.service.storage.WalletStorage;
 import org.zinaliev.transfermanager.util.JsonMapper;
-import org.zinaliev.transfermanager.util.ModelMapper;
 import spark.Request;
 import spark.Response;
 

@@ -1,5 +1,6 @@
 package org.zinaliev.transfermanager;
 
+import com.google.common.io.Resources;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -14,7 +15,10 @@ import spark.Spark;
 @Slf4j
 @Singleton
 public class Application {
-    protected static Injector injector;
+
+    private static final String DEFAULT_CONFIG = "config.yaml";
+
+    static Injector injector;
 
     private final ApplicationConfig appConfig;
     private final ExceptionHandlerImpl exceptionHandler;
@@ -28,21 +32,29 @@ public class Application {
     }
 
     public static void main(String[] args) {
+        String configFile;
 
-        if (args.length < 1) {
-            System.out.println("ERROR: Application config file must be specified as the command line argument");
-            return;
+        try {
+
+            if (args.length == 1)
+                configFile = args[0];
+            else
+                configFile = Resources.getResource(DEFAULT_CONFIG).getPath();
+
+            ApplicationConfig appConfig = ConfigUtils.readAppConfig(configFile);
+            ConfigUtils.setupLogging(appConfig);
+            log.info("Starting application using configuration file {}", configFile);
+
+            injector = Guice.createInjector(new ApplicationModule(appConfig));
+
+            Application application = injector.getInstance(Application.class);
+            application.start();
+
+            Runtime.getRuntime().addShutdownHook(new Thread(application::stop));
+
+        } catch (Exception e) {
+            log.error("Failed to start application", e);
         }
-
-        ApplicationConfig appConfig = ConfigUtils.readAppConfig(args[0]);
-        ConfigUtils.setupLogging(appConfig);
-
-        injector = Guice.createInjector(new ApplicationModule(appConfig));
-
-        Application application = injector.getInstance(Application.class);
-        application.start();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(application::stop));
     }
 
     private void start() {
@@ -56,7 +68,6 @@ public class Application {
         registerExceptionHandler();
 
         Spark.awaitInitialization();
-        log.debug("Started");
     }
 
     private void stop() {
