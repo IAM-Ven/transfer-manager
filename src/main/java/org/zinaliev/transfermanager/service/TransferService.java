@@ -5,5 +5,5 @@ public interface TransferService {
     /**
      * Transfer money between wallets
      */
-    void transfer(String sourceWalletId, String targetWalletTid, double moneyAmount);
+    void transfer(String sourceWalletId, String targetWalletId, double moneyAmount);
 }
