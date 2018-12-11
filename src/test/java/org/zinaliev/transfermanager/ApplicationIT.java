@@ -82,7 +82,7 @@ public class ApplicationIT {
     public void testCreateWallet_WithExistingId_RespondsWithBadRequest() {
         createWallet("123", "USD", 123.45);
 
-        HttpResponse<ResponseModel> createResp = createWallet("123", "RUR", 123.45);
+        HttpResponse<ResponseModel> createResp = createWallet("123", "RUB", 123.45);
 
         assertEquals(400, createResp.getStatus());
         assertEquals(WALLET_ALREADY_EXISTS.getCode(), createResp.getBody().getCodeEx());

@@ -46,8 +46,8 @@ public class TransferServiceImpl implements TransferService {
         }
 
         // avoids resource-ordering deadlock
-        synchronized (lockedFirst.getSync()) {
-            synchronized (lockedAfter.getSync()) {
+        synchronized (lockedFirst.getLock()) {
+            synchronized (lockedAfter.getLock()) {
                 transfer(source, target, amount);
             }
         }

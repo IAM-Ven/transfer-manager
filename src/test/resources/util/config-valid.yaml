@@ -10,7 +10,7 @@ server:
 
 # Supported currencies
 currencies:
-  - 'RUR'
+  - 'RUB'
 
 
 # Specify log config file's FULL PATH

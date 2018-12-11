@@ -20,7 +20,7 @@ public class ConfigUtilsTest {
         assertNotNull(appConfig.getSupportedCurrencies());
 
         assertEquals(1, appConfig.getSupportedCurrencies().size());
-        assertEquals("RUR", appConfig.getSupportedCurrencies().get(0));
+        assertEquals("RUB", appConfig.getSupportedCurrencies().get(0));
 
         assertEquals("logback.xml", appConfig.getLogConfigFile());
         assertEquals(4568, appConfig.getServerConfig().getPort());

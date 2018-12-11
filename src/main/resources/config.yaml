@@ -10,7 +10,7 @@ server:
 
 # Supported currencies
 currencies:
-  - 'RUR'
+  - 'RUB'
   - 'GBP'
   - 'USD'
   - 'EUR'

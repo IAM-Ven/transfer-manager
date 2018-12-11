@@ -17,7 +17,7 @@ public class InMemoryWalletStorageTest {
 
     @Before
     public void beforeEach() {
-        wallet.setMoney(Money.of(CurrencyUnit.of("RUR"), 100));
+        wallet.setMoney(Money.of(CurrencyUnit.of("RUB"), 100));
         wallet.setId("test-wallet-id");
     }
 
@@ -51,7 +51,7 @@ public class InMemoryWalletStorageTest {
         assertEquals(wallet, storage.get(wallet.getId()));
 
         // it's important to keep original object since we might be using it's sync Object in a transfer atm
-        assertEquals(wallet.getSync(), storage.get(wallet.getId()).getSync());
+        assertEquals(wallet.getLock(), storage.get(wallet.getId()).getLock());
     }
 
     @Test(expected = NotFoundException.class)

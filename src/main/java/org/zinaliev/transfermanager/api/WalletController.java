@@ -32,6 +32,7 @@ public class WalletController {
         String id = request.params(ApiPaths.VAR_WALLET_ID);
         WalletModel model = jsonMapper.fromJson(request.body(), WalletModel.class);
         Wallet wallet = modelMapper.convert(id, model);
+
         storage.add(wallet);
 
         return jsonMapper.toJson(new ResponseModel<>());
@@ -39,6 +40,7 @@ public class WalletController {
 
     public String getWallet(Request request, Response response) {
         String id = request.params(ApiPaths.VAR_WALLET_ID);
+
         Wallet wallet = storage.get(id);
         WalletModel model = modelMapper.convert(wallet);
 
@@ -47,6 +49,7 @@ public class WalletController {
 
     public String deleteWallet(Request request, Response response) {
         String walletId = request.params(ApiPaths.VAR_WALLET_ID);
+
         storage.delete(walletId);
 
         return jsonMapper.toJson(new ResponseModel<>());

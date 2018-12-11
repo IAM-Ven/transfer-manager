@@ -13,7 +13,7 @@ public class Wallet {
     @Getter
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Object sync = new Object();
+    private Object lock = new Object();
 
     @Getter
     @Setter

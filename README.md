@@ -1,6 +1,13 @@
 # transfer-manager
 A service for money transfers between accounts 
 
+## Prerequisites
+- Java 8
+- Maven 3
+- [Lombok](https://projectlombok.org/) IDE plugin   
+(So your IDE could resolve Lombok generated methods) 
+
+
 ## Build
 Build by Maven with unit and integration tests execution  
 
@@ -29,7 +36,7 @@ It's implied that wallets belong to some persons/accounts/cards but these relati
 WalletModel
 ```json
 {
-  "currencyCode": "RUR",
+  "currencyCode": "RUB",
   "amount": 100.5
 }
 ```
@@ -59,7 +66,7 @@ WalletResponseModel
   "message": "OK",
   "codeEx": 200,
   "data": {
-    "currencyCode": "RUR",
+    "currencyCode": "RUB",
     "amount": 100.5
   }
 }
