@@ -5,6 +5,7 @@ import org.joda.money.Money;
 import org.junit.Before;
 import org.junit.Test;
 import org.zinaliev.transfermanager.exception.AlreadyExistsException;
+import org.zinaliev.transfermanager.exception.NonEmptyWalletDeletionException;
 import org.zinaliev.transfermanager.exception.NotFoundException;
 import org.zinaliev.transfermanager.service.Wallet;
 
@@ -60,7 +61,8 @@ public class InMemoryWalletStorageTest {
     }
 
     @Test
-    public void testDelete_ExistingWallet_GetThrowsNotFoundException() {
+    public void testDelete_ExistingEmptyWallet_GetThrowsNotFoundException() {
+        wallet.setMoney(Money.of(CurrencyUnit.of("RUB"), 0));
         storage.add(wallet);
         storage.delete(wallet.getId());
 
@@ -75,5 +77,11 @@ public class InMemoryWalletStorageTest {
     @Test(expected = NotFoundException.class)
     public void testDelete_NotExistingWallet_ThrowsException() {
         storage.delete("not-existing-id");
+    }
+
+    @Test(expected = NonEmptyWalletDeletionException.class)
+    public void testDelete_ExistingNonEmptyWallet_ThrowsException() {
+        storage.add(wallet);
+        storage.delete(wallet.getId());
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.zinaliev.transfermanager.exception.AlreadyExistsException;
+import org.zinaliev.transfermanager.exception.NonEmptyWalletDeletionException;
 import org.zinaliev.transfermanager.exception.NotFoundException;
 import org.zinaliev.transfermanager.service.Wallet;
 
@@ -32,6 +33,9 @@ public class InMemoryWalletStorage implements WalletStorage {
 
         if (wallet == null)
             throw new NotFoundException("Wallet " + id + " is not found");
+
+        if(wallet.getMoney().isPositive())
+            throw new NonEmptyWalletDeletionException("Wallet with money can't be deleted");
 
         // prevent a wallet to be deleted while being used in a transaction
         synchronized (wallet.getLock()) {

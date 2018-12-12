@@ -107,8 +107,8 @@ public class ApplicationIT {
     }
 
     @Test
-    public void testDeleteWallet_ExistingWallet_GetWalletRespondsWithNotFound() {
-        createWallet("123", "USD", 123.45);
+    public void testDeleteWallet_EmptyWallet_GetWalletRespondsWithNotFound() {
+        createWallet("123", "USD", 0);
         HttpResponse<ResponseModel> deleteResp = deleteWallet("123");
 
         assertEquals(200, deleteResp.getStatus());
@@ -117,6 +117,15 @@ public class ApplicationIT {
         HttpResponse<WalletResponseModel> getResponse = getWallet("123");
         assertEquals(404, getResponse.getStatus());
         assertEquals(NOT_FOUND_DEFAULT.getCode(), getResponse.getBody().getCodeEx());
+    }
+
+    @Test
+    public void testDeleteWallet_NonEmptyWallet_RespondsWithBadRequest() {
+        createWallet("123", "USD", 100);
+        HttpResponse<ResponseModel> deleteResp = deleteWallet("123");
+
+        assertEquals(400, deleteResp.getStatus());
+        assertEquals(NON_EMPTY_WALLET_DELETION.getCode(), deleteResp.getBody().getCodeEx());
     }
 
     @Test
