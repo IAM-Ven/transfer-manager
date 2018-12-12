@@ -11,11 +11,11 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class JsonMapperTest {
+public class JsonSerializerTest {
 
     private final ObjectMapper jackson = mock(ObjectMapper.class);
 
-    private final JsonMapper mapper = new JsonMapper(jackson);
+    private final JsonSerializer mapper = new JsonSerializer(jackson);
 
     private final Object object = new Object();
     private final String json = "";

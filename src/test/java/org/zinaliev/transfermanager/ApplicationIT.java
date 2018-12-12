@@ -11,7 +11,7 @@ import org.zinaliev.transfermanager.api.model.TransferModel;
 import org.zinaliev.transfermanager.api.model.WalletModel;
 import org.zinaliev.transfermanager.service.storage.InMemoryWalletStorage;
 import org.zinaliev.transfermanager.util.ConfigUtils;
-import org.zinaliev.transfermanager.util.JsonMapper;
+import org.zinaliev.transfermanager.util.JsonSerializer;
 import org.zinaliev.transfermanager.util.UnirestUtils;
 import unirest.HttpResponse;
 import unirest.Unirest;
@@ -23,7 +23,7 @@ import static org.zinaliev.transfermanager.exception.StatusCode.*;
 public class ApplicationIT {
 
     private static final String CONFIG_FILE = "config-test.yaml";
-    private static JsonMapper jsonMapper;
+    private static JsonSerializer serializer;
     private static String urlBase;
     private static InMemoryWalletStorage storage;
 
@@ -31,7 +31,7 @@ public class ApplicationIT {
     public static void beforeAll() {
         String configFile = Resources.getResource(CONFIG_FILE).getPath();
         Application.main(new String[]{configFile});
-        jsonMapper = Application.injector.getInstance(JsonMapper.class);
+        serializer = Application.injector.getInstance(JsonSerializer.class);
         storage = Application.injector.getInstance(InMemoryWalletStorage.class);
 
         ApplicationConfig appConfig = ConfigUtils.readAppConfig(configFile);
@@ -230,7 +230,7 @@ public class ApplicationIT {
 
         return preValidate(
                 Unirest.post(urlBase + ApiPaths.WALLET + id)
-                        .body(jsonMapper.toJson(wallet))
+                        .body(serializer.toJson(wallet))
                         .asObject(ResponseModel.class)
         );
     }
@@ -256,7 +256,7 @@ public class ApplicationIT {
 
         return preValidate(
                 Unirest.post(urlBase + ApiPaths.WALLET + sourceWalletId + ApiPaths.TRANSFER)
-                        .body(jsonMapper.toJson(args))
+                        .body(serializer.toJson(args))
                         .asObject(ResponseModel.class)
         );
     }

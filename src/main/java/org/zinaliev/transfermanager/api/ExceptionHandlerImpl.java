@@ -8,7 +8,7 @@ import org.zinaliev.transfermanager.api.model.ResponseModel;
 import org.zinaliev.transfermanager.exception.ApplicationException;
 import org.zinaliev.transfermanager.exception.JsonReadException;
 import org.zinaliev.transfermanager.exception.StatusCode;
-import org.zinaliev.transfermanager.util.JsonMapper;
+import org.zinaliev.transfermanager.util.JsonSerializer;
 import spark.ExceptionHandler;
 import spark.Request;
 import spark.Response;
@@ -17,11 +17,11 @@ import spark.Response;
 @Singleton
 public class ExceptionHandlerImpl implements ExceptionHandler<Exception> {
 
-    private final JsonMapper jsonMapper;
+    private final JsonSerializer serializer;
 
     @Inject
-    public ExceptionHandlerImpl(JsonMapper jsonMapper) {
-        this.jsonMapper = jsonMapper;
+    public ExceptionHandlerImpl(JsonSerializer serializer) {
+        this.serializer = serializer;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ExceptionHandlerImpl implements ExceptionHandler<Exception> {
             );
 
         try {
-            response.body(jsonMapper.toJson(body));
+            response.body(serializer.toJson(body));
         } catch (Exception exc) {
             log.error("Failed to set response body from " + body, exc);
         }

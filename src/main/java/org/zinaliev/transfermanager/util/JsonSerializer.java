@@ -12,12 +12,12 @@ import java.io.IOException;
 
 @Singleton
 @Slf4j
-public class JsonMapper {
+public class JsonSerializer {
 
     private final ObjectMapper jackson;
 
     @Inject
-    public JsonMapper(ObjectMapper jackson) {
+    public JsonSerializer(ObjectMapper jackson) {
         this.jackson = jackson;
     }
 
