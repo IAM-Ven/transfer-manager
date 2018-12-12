@@ -28,7 +28,7 @@ public class ResponseModel<T> {
         return result;
     }
 
-    public static ResponseModel<?> ok(){
+    public static ResponseModel ok(){
         return ok(null);
     }
 }

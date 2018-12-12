@@ -41,7 +41,6 @@ public class ExceptionHandlerImpl implements ExceptionHandler<Exception> {
             ApplicationException exc = (ApplicationException) e;
             response.status(exc.getCode());
             body.setCodeEx(exc.getCodeEx());
-            body.setMessage(exc.getMessage());
         } else {
             response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
             body.setCodeEx(HttpStatus.INTERNAL_SERVER_ERROR_500);

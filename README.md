@@ -25,18 +25,26 @@ The main abstraction in the service is **wallet**. A wallet stores money in a si
 It's implied that wallets belong to some persons/accounts/cards but these relations are meant to be out of this service scope  
   
 
-| Method        | Type   | URL                   | Request Body  | Response Body       |  
-| :---:         | :---:  | :---:                 | :---:         | :---:               |
-| Create wallet | POST   | /wallet/{id}          | WalletModel   | ResponseModel       |
-| Get wallet    | GET    | /wallet/{id}          | -             | WalletResponseModel |
-| Delete wallet | DELETE | /wallet/{id}          | -             | ResponseModel       |
-| Transfer      | POST   | /wallet/{id}/transfer | TransferModel | ResponseModel       |
+| Method        | Type   | URL                   | Request Body         | Response Body       |  
+| :---:         | :---:  | :---:                 | :---:                | :---:               |
+| Create wallet | POST   | /wallet/{id}          | WalletModel          | ResponseModel       |
+| Get wallet    | GET    | /wallet/{id}          | -                    | WalletResponseModel |
+| Update wallet | PATCH  | /wallet/{id}          | UpdateWalletModel    | ResponseModel       |
+| Delete wallet | DELETE | /wallet/{id}          | -                    | ResponseModel       |
+| Transfer      | POST   | /wallet/{id}/transfer | TransferModel        | ResponseModel       |
 
 #### Models
 WalletModel
 ```json
 {
   "currencyCode": "RUB",
+  "amount": 100.5
+}
+```
+
+UpdateWalletModel
+```json
+{
   "amount": 100.5
 }
 ```

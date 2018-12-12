@@ -7,11 +7,7 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class WalletModel {
-
-    @Getter
-    @Setter
-    private String currencyCode;
+public class UpdateWalletModel {
 
     @Getter
     @Setter

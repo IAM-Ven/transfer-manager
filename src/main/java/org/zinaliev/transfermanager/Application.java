@@ -77,6 +77,7 @@ public class Application {
     private void registerApi() {
         Spark.post(ApiPaths.URL_WALLET, walletController::createWallet);
         Spark.get(ApiPaths.URL_WALLET, walletController::getWallet);
+        Spark.patch(ApiPaths.URL_WALLET, walletController::updateWallet);
         Spark.delete(ApiPaths.URL_WALLET, walletController::deleteWallet);
         Spark.post(ApiPaths.URL_TRANSFER, walletController::transfer);
     }

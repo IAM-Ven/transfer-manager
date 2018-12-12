@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.zinaliev.transfermanager.api.ApiPaths;
 import org.zinaliev.transfermanager.api.model.ResponseModel;
 import org.zinaliev.transfermanager.api.model.TransferModel;
+import org.zinaliev.transfermanager.api.model.UpdateWalletModel;
 import org.zinaliev.transfermanager.api.model.WalletModel;
 import org.zinaliev.transfermanager.service.storage.InMemoryWalletStorage;
 import org.zinaliev.transfermanager.util.ConfigUtils;
@@ -89,6 +90,14 @@ public class ApplicationIT {
     }
 
     @Test
+    public void testCreateWallet_WithNegativeAmount_RespondsWithBadRequest() {
+        HttpResponse<ResponseModel> createResp = createWallet("123", "RUB", -123.45);
+
+        assertEquals(400, createResp.getStatus());
+        assertEquals(INVALID_AMOUNT.getCode(), createResp.getBody().getCodeEx());
+    }
+
+    @Test
     public void testCreateWallet_InvalidInputBody_RespondsWithBadRequest() {
         HttpResponse<ResponseModel> createResp = Unirest.post(urlBase + ApiPaths.WALLET + "123")
                 .body("\"invalid\" : \"payload object\"")
@@ -104,6 +113,42 @@ public class ApplicationIT {
 
         assertEquals(404, response.getStatus());
         assertEquals(NOT_FOUND_DEFAULT.getCode(), response.getBody().getCodeEx());
+    }
+
+    @Test
+    public void testUpdateWallet_NonExistingWallet_RespondsWithNotFound() {
+        HttpResponse<ResponseModel> response = updateWallet("123", 0);
+
+        assertEquals(404, response.getStatus());
+        assertEquals(NOT_FOUND_DEFAULT.getCode(), response.getBody().getCodeEx());
+    }
+
+    @Test
+    public void testUpdateWallet_NegativeAmount_RespondsWithBadRequest() {
+        createWallet("123", "USD", 10);
+        HttpResponse<ResponseModel> response = updateWallet("123", -10);
+
+        assertEquals(400, response.getStatus());
+        assertEquals(INVALID_AMOUNT.getCode(), response.getBody().getCodeEx());
+    }
+
+    @Test
+    public void testUpdateWallet_NonNegativeAmount_GetReturnsModifiedWallet() {
+        createWallet("123", "USD", 10);
+
+        HttpResponse<ResponseModel> updateResp = updateWallet("123", 11);
+        assertEquals(200, updateResp.getStatus());
+        assertEquals(200, updateResp.getBody().getCodeEx());
+
+        HttpResponse<WalletResponseModel> getResp = getWallet("123");
+        assertEquals(11, getResp.getBody().getData().getAmount(), 0);
+
+        updateResp = updateWallet("123", 0);
+        assertEquals(200, updateResp.getStatus());
+        assertEquals(200, updateResp.getBody().getCodeEx());
+
+        getResp = getWallet("123");
+        assertEquals(0, getResp.getBody().getData().getAmount(), 0);
     }
 
     @Test
@@ -235,11 +280,11 @@ public class ApplicationIT {
     // region { Helper Methods }
 
     private HttpResponse<ResponseModel> createWallet(String id, String currencyCode, double amount) {
-        WalletModel wallet = new WalletModel(currencyCode, amount);
+        WalletModel body = new WalletModel(currencyCode, amount);
 
         return preValidate(
                 Unirest.post(urlBase + ApiPaths.WALLET + id)
-                        .body(serializer.toJson(wallet))
+                        .body(serializer.toJson(body))
                         .asObject(ResponseModel.class)
         );
     }
@@ -251,6 +296,16 @@ public class ApplicationIT {
         );
     }
 
+    private HttpResponse<ResponseModel> updateWallet(String id, double amount) {
+        UpdateWalletModel body = new UpdateWalletModel(amount);
+
+        return preValidate(
+                Unirest.patch(urlBase + ApiPaths.WALLET + id)
+                        .body(serializer.toJson(body))
+                        .asObject(ResponseModel.class)
+        );
+    }
+
     private HttpResponse<ResponseModel> deleteWallet(String id) {
         return preValidate(
                 Unirest.delete(urlBase + ApiPaths.WALLET + id)
@@ -258,14 +313,13 @@ public class ApplicationIT {
         );
     }
 
+
     private HttpResponse<ResponseModel> transfer(String sourceWalletId, String targetWalletId, double amount) {
-        TransferModel args = new TransferModel();
-        args.setTargetWallet(targetWalletId);
-        args.setAmount(amount);
+        TransferModel body = new TransferModel(targetWalletId, amount);
 
         return preValidate(
                 Unirest.post(urlBase + ApiPaths.WALLET + sourceWalletId + ApiPaths.TRANSFER)
-                        .body(serializer.toJson(args))
+                        .body(serializer.toJson(body))
                         .asObject(ResponseModel.class)
         );
     }

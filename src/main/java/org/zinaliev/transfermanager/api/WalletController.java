@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.zinaliev.transfermanager.api.model.ResponseModel;
 import org.zinaliev.transfermanager.api.model.TransferModel;
+import org.zinaliev.transfermanager.api.model.UpdateWalletModel;
 import org.zinaliev.transfermanager.api.model.WalletModel;
 import org.zinaliev.transfermanager.service.TransferService;
 import org.zinaliev.transfermanager.service.Wallet;
@@ -46,6 +47,16 @@ public class WalletController {
 
         return serializer.toJson(ResponseModel.ok(model));
     }
+
+    public String updateWallet(Request request, Response response) {
+        String id = request.params(ApiPaths.VAR_WALLET_ID);
+        UpdateWalletModel model = serializer.fromJson(request.body(), UpdateWalletModel.class);
+
+        storage.update(id, model.getAmount());
+
+        return serializer.toJson(ResponseModel.ok());
+    }
+
 
     public String deleteWallet(Request request, Response response) {
         String walletId = request.params(ApiPaths.VAR_WALLET_ID);
