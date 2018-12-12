@@ -28,9 +28,15 @@ public class InMemoryWalletStorage implements WalletStorage {
 
     @Override
     public void delete(String id) {
+        Wallet wallet = wallets.get(id);
 
-        if (wallets.remove(id) == null)
+        if (wallet == null)
             throw new NotFoundException("Wallet " + id + " is not found");
+
+        // prevent a wallet to be deleted while being used in a transaction
+        synchronized (wallet.getLock()) {
+            wallets.remove(id);
+        }
 
         log.info("Deleted wallet with id {}", id);
     }
