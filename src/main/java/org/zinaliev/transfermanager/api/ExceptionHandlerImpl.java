@@ -30,9 +30,13 @@ public class ExceptionHandlerImpl implements ExceptionHandler<Exception> {
 
         body.setMessage(e.getMessage());
 
-        if (e instanceof IllegalArgumentException || e instanceof JsonReadException) {
+        if (e instanceof IllegalArgumentException) {
             response.status(HttpStatus.BAD_REQUEST_400);
             body.setCodeEx(StatusCode.BAD_REQUEST_DEFAULT.getCode());
+        } else if (e instanceof JsonReadException) {
+            response.status(HttpStatus.BAD_REQUEST_400);
+            body.setCodeEx(StatusCode.BAD_REQUEST_DEFAULT.getCode());
+            body.setMessage("Invalid request body (JSON model mismatch)");
         } else if (e instanceof ApplicationException) {
             ApplicationException exc = (ApplicationException) e;
             response.status(exc.getCode());
@@ -41,7 +45,7 @@ public class ExceptionHandlerImpl implements ExceptionHandler<Exception> {
         } else {
             response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
             body.setCodeEx(HttpStatus.INTERNAL_SERVER_ERROR_500);
-            body.setMessage(e.getMessage());
+            body.setMessage("Internal server error. See logs for details");
         }
 
         if (response.status() == HttpStatus.INTERNAL_SERVER_ERROR_500)
@@ -57,7 +61,7 @@ public class ExceptionHandlerImpl implements ExceptionHandler<Exception> {
         try {
             response.body(jsonMapper.toJson(body));
         } catch (Exception exc) {
-            log.warn("Failed to set response body from " + body, exc);
+            log.error("Failed to set response body from " + body, exc);
         }
     }
 }
