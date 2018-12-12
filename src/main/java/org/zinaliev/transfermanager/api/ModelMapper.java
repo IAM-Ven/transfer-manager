@@ -8,11 +8,14 @@ import org.joda.money.Money;
 import org.zinaliev.transfermanager.ApplicationConfig;
 import org.zinaliev.transfermanager.api.model.WalletModel;
 import org.zinaliev.transfermanager.exception.ApplicationException;
-import org.zinaliev.transfermanager.exception.UnsupportedCurrencyException;
+import org.zinaliev.transfermanager.exception.WalletException;
 import org.zinaliev.transfermanager.service.Wallet;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.zinaliev.transfermanager.exception.StatusCode.INVALID_AMOUNT;
+import static org.zinaliev.transfermanager.exception.StatusCode.INVALID_CURRENCY;
 
 @Singleton
 public class ModelMapper {
@@ -29,7 +32,7 @@ public class ModelMapper {
      * Converts {@link WalletModel} received from HTTP endpoint to {@link Wallet} being used internally in the service
      *
      * @throws IllegalArgumentException null or empty input args
-     * @throws UnsupportedCurrencyException client requested currency is not supported by the service
+     * @throws WalletException client requested currency is not supported by the service, source model hsa negative amount value
      */
     public Wallet convert(String walletId, WalletModel model) {
 
@@ -42,8 +45,11 @@ public class ModelMapper {
         if (Strings.isNullOrEmpty(model.getCurrencyCode()))
             throw new IllegalArgumentException("Model currency code must be specified");
 
+        if(model.getAmount() < 0)
+            throw new WalletException(INVALID_AMOUNT, "Wallet money amount can not be negative");
+
         if (!currencies.contains(model.getCurrencyCode().toUpperCase()))
-            throw new UnsupportedCurrencyException("Unsupported currency " + model.getCurrencyCode());
+            throw new WalletException(INVALID_CURRENCY, "Unsupported currency " + model.getCurrencyCode());
 
         Wallet result = new Wallet();
 

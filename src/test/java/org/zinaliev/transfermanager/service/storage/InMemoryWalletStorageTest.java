@@ -4,9 +4,8 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;
 import org.junit.Test;
-import org.zinaliev.transfermanager.exception.AlreadyExistsException;
-import org.zinaliev.transfermanager.exception.NonEmptyWalletDeletionException;
 import org.zinaliev.transfermanager.exception.NotFoundException;
+import org.zinaliev.transfermanager.exception.WalletException;
 import org.zinaliev.transfermanager.service.Wallet;
 
 import static org.junit.Assert.*;
@@ -29,7 +28,7 @@ public class InMemoryWalletStorageTest {
         assertEquals(wallet, storage.get(wallet.getId()));
     }
 
-    @Test(expected = AlreadyExistsException.class)
+    @Test(expected = WalletException.class)
     public void testAdd_DifferentWalletWithSameId_ThrowsException() {
         storage.add(wallet);
 
@@ -79,9 +78,32 @@ public class InMemoryWalletStorageTest {
         storage.delete("not-existing-id");
     }
 
-    @Test(expected = NonEmptyWalletDeletionException.class)
+    @Test(expected = WalletException.class)
     public void testDelete_ExistingNonEmptyWallet_ThrowsException() {
         storage.add(wallet);
         storage.delete(wallet.getId());
     }
+
+    @Test(expected = NotFoundException.class)
+    public void testUpdate_NotExistingWallet_ThrowsException() {
+        storage.update("not-existing-id", 0);
+    }
+
+    @Test(expected = WalletException.class)
+    public void testUpdate_NegativeAmount_ThrowsException() {
+        storage.add(wallet);
+        storage.update(wallet.getId(), -1.5);
+    }
+
+    @Test
+    public void testUpdate_ZeroOrPositiveAmount_UpdatesWallet() {
+        storage.add(wallet);
+
+        storage.update(wallet.getId(), 1.5);
+        assertEquals(1.5, wallet.getMoney().getAmount().doubleValue(), 0);
+
+        storage.update(wallet.getId(), 0);
+        assertEquals(0, wallet.getMoney().getAmount().doubleValue(), 0);
+    }
+
 }

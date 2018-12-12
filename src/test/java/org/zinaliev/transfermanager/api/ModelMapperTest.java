@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.zinaliev.transfermanager.ApplicationConfig;
 import org.zinaliev.transfermanager.api.model.WalletModel;
 import org.zinaliev.transfermanager.exception.ApplicationException;
-import org.zinaliev.transfermanager.exception.UnsupportedCurrencyException;
+import org.zinaliev.transfermanager.exception.WalletException;
 import org.zinaliev.transfermanager.service.Wallet;
 
 import static org.junit.Assert.assertEquals;
@@ -33,10 +33,16 @@ public class ModelMapperTest {
         wallet.setId(id);
     }
 
-    @Test(expected = UnsupportedCurrencyException.class)
+    @Test(expected = WalletException.class)
     public void testModelToWallet_UnsupportedCurrency_ThrowsException() {
         model.setCurrencyCode("AUD");
 
+        mapper.convert(id, model);
+    }
+
+    @Test(expected = WalletException.class)
+    public void testModelToWallet_NegativeAmountModel_ThrowsException() {
+        model.setAmount( -1);
         mapper.convert(id, model);
     }
 
@@ -69,7 +75,7 @@ public class ModelMapperTest {
 
         assertEquals(id, converted.getId());
         assertEquals(model.getCurrencyCode(), converted.getMoney().getCurrencyUnit().getCode());
-        assertEquals(model.getAmount(), converted.getMoney().getAmount().doubleValue(), 0.0001);
+        assertEquals(model.getAmount(), converted.getMoney().getAmount().doubleValue(), 0);
     }
 
     @Test
@@ -77,7 +83,7 @@ public class ModelMapperTest {
         WalletModel converted = mapper.convert(wallet);
 
         assertEquals(wallet.getMoney().getCurrencyUnit().getCode(), converted.getCurrencyCode());
-        assertEquals(wallet.getMoney().getAmount().doubleValue(), converted.getAmount(), 0.0001);
+        assertEquals(wallet.getMoney().getAmount().doubleValue(), converted.getAmount(), 0);
     }
 
     @Test(expected = ApplicationException.class)
