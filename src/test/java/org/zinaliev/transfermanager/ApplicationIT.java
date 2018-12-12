@@ -67,7 +67,7 @@ public class ApplicationIT {
         assertEquals(200, body.getCodeEx());
         assertEquals("OK", body.getMessage());
         assertEquals("USD", body.getData().getCurrencyCode());
-        assertEquals(123.45, body.getData().getAmount(), 0.001);
+        assertEquals(123.45, body.getData().getAmount(), 0);
     }
 
     @Test
@@ -145,8 +145,8 @@ public class ApplicationIT {
         assertEquals(200, walletA.getStatus());
         assertEquals(200, walletB.getStatus());
 
-        assertEquals(90, walletA.getBody().getData().getAmount(), 0.0001);
-        assertEquals(11, walletB.getBody().getData().getAmount(), 0.0001);
+        assertEquals(90, walletA.getBody().getData().getAmount(), 0);
+        assertEquals(11, walletB.getBody().getData().getAmount(), 0);
     }
 
     @Test

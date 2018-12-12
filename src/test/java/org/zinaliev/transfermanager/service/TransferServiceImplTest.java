@@ -85,7 +85,7 @@ public class TransferServiceImplTest {
     public void testTransfer_ValidConditions_MovesMoneyFromSourceToTargetWallet() {
         service.transfer(sourceId, targetId, 100);
 
-        assertEquals(100, source.getMoney().getAmount().doubleValue(), 0.0001);
-        assertEquals(600, target.getMoney().getAmount().doubleValue(), 0.0001);
+        assertEquals(100, source.getMoney().getAmount().doubleValue(), 0);
+        assertEquals(600, target.getMoney().getAmount().doubleValue(), 0);
     }
 }
