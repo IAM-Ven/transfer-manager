@@ -35,7 +35,7 @@ public class WalletController {
 
         storage.add(wallet);
 
-        return jsonMapper.toJson(new ResponseModel<>());
+        return jsonMapper.toJson(ResponseModel.ok());
     }
 
     public String getWallet(Request request, Response response) {
@@ -52,7 +52,7 @@ public class WalletController {
 
         storage.delete(walletId);
 
-        return jsonMapper.toJson(new ResponseModel<>());
+        return jsonMapper.toJson(ResponseModel.ok());
     }
 
     public String transfer(Request request, Response response) {
@@ -61,6 +61,6 @@ public class WalletController {
 
         transferService.transfer(walletId, transferArgs.getTargetWallet(), transferArgs.getAmount());
 
-        return jsonMapper.toJson(new ResponseModel<>());
+        return jsonMapper.toJson(ResponseModel.ok());
     }
 }
