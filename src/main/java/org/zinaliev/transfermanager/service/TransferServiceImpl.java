@@ -4,12 +4,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.money.Money;
+import org.zinaliev.transfermanager.exception.ApplicationException;
 import org.zinaliev.transfermanager.exception.StatusCode;
 import org.zinaliev.transfermanager.exception.TransferException;
 import org.zinaliev.transfermanager.service.storage.WalletStorage;
 
-import static org.zinaliev.transfermanager.exception.StatusCode.INSUFFICIENT_MONEY;
-import static org.zinaliev.transfermanager.exception.StatusCode.INVALID_CURRENCY;
+import static org.zinaliev.transfermanager.exception.StatusCode.*;
 
 @Slf4j
 @Singleton
@@ -60,14 +60,22 @@ public class TransferServiceImpl implements TransferService {
         if (!sourceMoney.isSameCurrency(targetMoney))
             throw new TransferException(INVALID_CURRENCY, "Target wallet currency should match to source one");
 
-        Money transferred = Money.of(sourceMoney.getCurrencyUnit(), amount);
+        Money delta = Money.of(sourceMoney.getCurrencyUnit(), amount);
 
-        if (!transferred.isLessThan(sourceMoney))
+        if (!delta.isLessThan(sourceMoney))
             throw new TransferException(INSUFFICIENT_MONEY, "Source wallet stores insufficient money for the transfer");
 
-        source.setMoney(sourceMoney.minus(transferred));
-        target.setMoney(targetMoney.plus(transferred));
+        try {
+            sourceMoney = sourceMoney.minus(delta);
+            targetMoney = targetMoney.plus(delta);
+        } catch (Exception e) {
+            log.error("Failed to process transaction, source: " + source + ", target: " + target + ", delta: " + delta, e);
+            throw new ApplicationException(TRANSACTION_PROCESSING_ERROR, "Internal transaction processing error");
+        }
 
-        log.info("Transferred {} from wallet {} to wallet {}", transferred, source.getId(), target.getId());
+        source.setMoney(sourceMoney);
+        target.setMoney(targetMoney);
+
+        log.info("Transferred {} from wallet {} to wallet {}", delta, source.getId(), target.getId());
     }
 }

@@ -12,7 +12,8 @@ public enum StatusCode {
     INVALID_AMOUNT(40004),
     INSUFFICIENT_MONEY(40005),
     NOT_FOUND_DEFAULT(404),
-    SERVER_ERROR_DEFAULT(500);
+    SERVER_ERROR_DEFAULT(500),
+    TRANSACTION_PROCESSING_ERROR(50001);
 
     @Getter
     private final int code;

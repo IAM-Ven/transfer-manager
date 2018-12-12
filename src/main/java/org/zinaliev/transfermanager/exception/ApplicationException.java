@@ -12,7 +12,11 @@ public class ApplicationException extends RuntimeException {
     protected final int codeEx;
 
     public ApplicationException(String message) {
-        this(HttpStatus.INTERNAL_SERVER_ERROR_500, StatusCode.SERVER_ERROR_DEFAULT, message);
+        this(StatusCode.SERVER_ERROR_DEFAULT, message);
+    }
+
+    public ApplicationException(StatusCode codeEx, String message) {
+        this(HttpStatus.INTERNAL_SERVER_ERROR_500, codeEx, message);
     }
 
     public ApplicationException(int code, StatusCode codeEx, String message) {

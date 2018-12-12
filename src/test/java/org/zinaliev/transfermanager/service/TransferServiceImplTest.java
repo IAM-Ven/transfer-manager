@@ -4,12 +4,14 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.Before;
 import org.junit.Test;
+import org.zinaliev.transfermanager.exception.ApplicationException;
 import org.zinaliev.transfermanager.exception.TransferException;
 import org.zinaliev.transfermanager.service.storage.WalletStorage;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 
 public class TransferServiceImplTest {
 
@@ -40,8 +42,13 @@ public class TransferServiceImplTest {
     }
 
     @Test(expected = TransferException.class)
-    public void testTransfer_NonPositiveAmount_ThrowsException() {
+    public void testTransfer_NegativeAmount_ThrowsException() {
         service.transfer(sourceId, targetId, -1);
+    }
+
+    @Test(expected = TransferException.class)
+    public void testTransfer_ZeroAmount_ThrowsException() {
+        service.transfer(sourceId, targetId, 0);
     }
 
     @Test(expected = TransferException.class)
@@ -56,6 +63,24 @@ public class TransferServiceImplTest {
         service.transfer(sourceId, targetId, 300);
     }
 
+    @Test(expected = ApplicationException.class)
+    public void testTransfer_JodaTimeExceptionOnMinusOperation_ThrowsApplicationException() {
+        Money sourceMoney = spy(source.getMoney());
+        doThrow(mock(RuntimeException.class)).when(sourceMoney).minus(any(Money.class));
+        source.setMoney(sourceMoney);
+
+        service.transfer(sourceId, targetId, 100);
+    }
+
+    @Test(expected = ApplicationException.class)
+    public void testTransfer_JodaTimeExceptionOnPlusOperation_ThrowsApplicationException() {
+        Money targetMoney = spy(target.getMoney());
+        doThrow(mock(RuntimeException.class)).when(targetMoney).plus(any(Money.class));
+        target.setMoney(targetMoney);
+
+        service.transfer(sourceId, targetId, 100);
+    }
+
     @Test
     public void testTransfer_ValidConditions_MovesMoneyFromSourceToTargetWallet() {
         service.transfer(sourceId, targetId, 100);
@@ -63,5 +88,4 @@ public class TransferServiceImplTest {
         assertEquals(100, source.getMoney().getAmount().doubleValue(), 0.0001);
         assertEquals(600, target.getMoney().getAmount().doubleValue(), 0.0001);
     }
-
 }
